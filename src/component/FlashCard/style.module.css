@@ -1,0 +1,55 @@
+/* src/FlipCard.module.css */
+.flipCard {
+    background-color:transparent;
+    width: 300px;
+    height: 200px;
+    perspective: 1000px;
+  }
+  
+  .flipCardInner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    transition: transform 0.6s, opacity 0.6s ease-in-out;
+    transform-style: preserve-3d;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    border-radius: 15px;
+    background-color: #081018;
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+  
+  .rotate {
+    transform: rotateY(180deg);
+  }
+  
+  .flipCardFront, .flipCardBack {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    -webkit-backface-visibility: hidden; 
+    backface-visibility: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  
+  .flipCardFront>P{
+    background: linear-gradient(90deg, #F5744C 0%, #E92929 90%, #9D00E7 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  
+  .flipCardBack>P{
+    background: linear-gradient(90deg, #00F5A0 0%,  #00D9F5 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  
+  
+  .flipCardBack {
+    transform: rotateY(180deg);
+  }
+  
