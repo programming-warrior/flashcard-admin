@@ -74,19 +74,25 @@ const Dashboard = () => {
 
             <div className={`${modal ? 'block' : 'hidden'} absolute rounded-lg bg-gradient-to-r from-[#00F5A0] to-[#00D9F5] z-10          text-white top-52 left-1/2 -translate-x-1/2 min-w-72`}
             >
-                <div className="flex justify-end cursor-pointer px-3 pt-1" onClick={() => setModal(false)}>
+                <div className="flex justify-end cursor-pointer px-3 pt-1" onClick={() =>{ 
+                        setModal(false);
+                        setQuestion("");
+                        setAnswer("");
+                    }}>
                     <CloseIcon />
                 </div>
                 <form className="min-w-72 p-6 text-black" onSubmit={(e) => handleSubmit(e)}>
                     <div className="gap-3 flex items-center justify-between">
                         <label>Question</label>
                         <input className="py-1 px-2 border border-black outline-none" type="text"
+                            value={question}
                             onChange={(e) => setQuestion(e.target.value)}
                         />
                     </div>
                     <div className="gap-3  flex items-center justify-between  mt-3">
                         <label>Answer</label>
                         <input className="py-1 px-2 border border-black outline-none" type="text"
+                            value={answer}
                             onChange={(e) => setAnswer(e.target.value)}
                         />
                     </div>
@@ -118,6 +124,8 @@ const Dashboard = () => {
                         return <FlashCard data={e} handleUpdate={() => {
                                 setId(e.id);
                                 setModal(true);
+                                setQuestion(e.question);
+                                setAnswer(e.answer)
                                 setAction('UPDATE');
                             }}
                             handleDelete={() => {
