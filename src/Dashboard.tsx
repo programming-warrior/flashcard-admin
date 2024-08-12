@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import FlashCard from "./component/FlashCard/FlashCard";
 import CloseIcon from "./component/CloseIcon";
+import { useNavigate } from "react-router-dom";
 
 
 interface FlashCardType {
@@ -18,6 +19,7 @@ const Dashboard = () => {
     const [answer, setAnswer] = useState("");
     const [id, setId] = useState('');
     const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+    const navigate=useNavigate();
 
 
     async function fetchData() {
@@ -33,37 +35,57 @@ const Dashboard = () => {
         const path = action === 'ADD' ? '/api/create' : `/api/update/${id}`;
 
         console.log(path);
-        const token=localStorage.getItem('token');
+        const token = localStorage.getItem('token');
 
         const res = await axios(`${BACKEND_URL}${path}`, {
-            method:method,
+            method: method,
             headers: {
-              Authorization: `Bearer ${token}` 
+                Authorization: `Bearer ${token}`
             },
-            data:{
+            data: {
                 question,
                 answer
             }
-          });
+        });
 
-          if(res.status===200 || res.status===201){
+        if (res.status === 200 || res.status === 201) {
             setModal(false);
-            fetchData();
-          }
-    }
-
-    async function handleDelete(id:string){
-        const token=localStorage.getItem('token');
-        const res = await axios.delete(`${BACKEND_URL}/api/delete/${id}`, {
-            headers: {
-              Authorization: `Bearer ${token}` 
-            }
-          });
-        
-        if(res.status===200 || res.status===201){
+            setQuestion("");
+            setAnswer("");
             fetchData();
         }
     }
+
+    async function handleDelete(id: string) {
+        const token = localStorage.getItem('token');
+        const res = await axios.delete(`${BACKEND_URL}/api/delete/${id}`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+
+        if (res.status === 200 || res.status === 201) {
+            fetchData();
+        }
+    }
+
+    async function handleLogOut(){
+        const token=localStorage.getItem('token');
+        
+        try{
+            const res=await axios.post(`${BACKEND_URL}/api/token/delete`,{
+                token
+            });
+            if(res.status=== 200 || res.status===201){
+                localStorage.removeItem('token');
+                navigate('/login');
+            }
+        }
+        catch(e){
+            console.log(e);
+        }
+    }
+
 
     useEffect(() => {
         fetchData();
@@ -74,11 +96,11 @@ const Dashboard = () => {
 
             <div className={`${modal ? 'block' : 'hidden'} absolute rounded-lg bg-gradient-to-r from-[#00F5A0] to-[#00D9F5] z-10          text-white top-52 left-1/2 -translate-x-1/2 min-w-72`}
             >
-                <div className="flex justify-end cursor-pointer px-3 pt-1" onClick={() =>{ 
-                        setModal(false);
-                        setQuestion("");
-                        setAnswer("");
-                    }}>
+                <div className="flex justify-end cursor-pointer px-3 pt-1" onClick={() => {
+                    setModal(false);
+                    setQuestion("");
+                    setAnswer("");
+                }}>
                     <CloseIcon />
                 </div>
                 <form className="min-w-72 p-6 text-black" onSubmit={(e) => handleSubmit(e)}>
@@ -102,7 +124,7 @@ const Dashboard = () => {
                 </form>
             </div>
 
-            <nav className="w-full flex justify-end p-6 ">
+            <nav className="w-full flex justify-end gap-4 p-6 ">
 
                 <button style={{
                     boxShadow: 'inset 0px 2px 1px rgba(255, 255, 255, 0.2),inset 0px -2px 1px rgba(0, 0, 0, 0.2)',
@@ -116,18 +138,31 @@ const Dashboard = () => {
                 >
                     Add Flashcard
                 </button>
+
+                <button style={{
+                    boxShadow: 'inset 0px 2px 1px rgba(255, 255, 255, 0.2),inset 0px -2px 1px rgba(0, 0, 0, 0.2)',
+                    filter: 'drop-shadow(0px 2px 6px rgba(14, 42, 87, 0.1)) drop-shadow(0px 1px 2px rgba(3, 16, 38, 0.26))'
+                }}
+                    className=" text-white  font-bold text-[12px] xl:text-sm bg-[#0077C2] tracking-wider px-3  xl:px-5  py-3 xl:py-4    rounded-xl "
+                    onClick={() => {
+                        handleLogOut();
+                    }}
+                >
+                    Logout
+                </button>
+
             </nav>
 
             <div className=" p-10 flex flex-wrap justify-center cursor-pointer gap-6">
                 {
                     flashCards.map(e => {
                         return <FlashCard data={e} handleUpdate={() => {
-                                setId(e.id);
-                                setModal(true);
-                                setQuestion(e.question);
-                                setAnswer(e.answer)
-                                setAction('UPDATE');
-                            }}
+                            setId(e.id);
+                            setModal(true);
+                            setQuestion(e.question);
+                            setAnswer(e.answer)
+                            setAction('UPDATE');
+                        }}
                             handleDelete={() => {
                                 handleDelete(e.id);
                             }}
