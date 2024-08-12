@@ -26,7 +26,7 @@ const Login = () => {
         }
         catch(e:any){
             if(errorDiv && errorDiv.current){
-                errorDiv.current.textContent=e.response.data.message;
+                errorDiv.current.textContent=e.response.data.error;
             }
         }
 
